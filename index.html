@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TODO MATRIX</title>
+
+<style>
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #f1f5f9;
+}
+
+.container {
+    display: grid;
+    grid-template-columns: 260px 1fr;
+    min-height: 100vh;
+}
+
+/* INFO */
+.info {
+    background: #0f172a;
+    color: white;
+    text-align: center;
+    padding: 30px 15px;
+}
+.info img {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-bottom: 15px;
+}
+.info h2 {
+    margin: 10px 0 5px;
+}
+.info p {
+    opacity: 0.9;
+}
+
+/* BOARD */
+.board {
+    padding: 20px;
+}
+
+.form {
+    margin-bottom: 20px;
+}
+.form input, .form select, .form button {
+    padding: 8px;
+    font-size: 14px;
+}
+
+/* MATRIX */
+.matrix {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+}
+
+.box {
+    background: white;
+    border-radius: 12px;
+    padding: 12px;
+    min-height: 150px;
+}
+.box h3 {
+    margin-top: 0;
+    font-size: 16px;
+    color: #1e293b;
+}
+
+.task {
+    background: #e5e7eb;
+    padding: 6px 8px;
+    border-radius: 6px;
+    margin-bottom: 6px;
+    font-size: 14px;
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+    .container {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <!-- INFO -->
+    <div class="info">
+        <img src="avatar.jpg" alt="Avatar">
+        <h2>LE HOANG NHINH</h2>
+        <p>MSSV: 231A010383</p>
+    </div>
+
+    <!-- BOARD -->
+    <div class="board">
+
+        <div class="form">
+            <input type="text" id="taskName" placeholder="Nhập tên công việc">
+            <select id="priority">
+                <option value="1">1 - Quan trọng & Khẩn cấp</option>
+                <option value="2">2 - Quan trọng & Không khẩn cấp</option>
+                <option value="3">3 - Không quan trọng & Khẩn cấp</option>
+                <option value="4">4 - Không quan trọng & Không khẩn cấp</option>
+            </select>
+            <button onclick="addTask()">Thêm</button>
+        </div>
+
+        <div class="matrix">
+            <div class="box" id="p1"><h3>Quan trọng & Khẩn cấp</h3></div>
+            <div class="box" id="p2"><h3>Quan trọng - Không khẩn cấp</h3></div>
+            <div class="box" id="p3"><h3>Không quan trọng - Khẩn cấp</h3></div>
+            <div class="box" id="p4"><h3>Không quan trọng - Không khẩn cấp</h3></div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+const MSSV = "231A010383"; // 🔴 đổi nếu cần
+const STORAGE_KEY = "tasks_" + MSSV;
+let tasks = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+
+function addTask() {
+    const name = document.getElementById("taskName").value.trim();
+    const priority = document.getElementById("priority").value;
+
+    if (name === "") return;
+
+    tasks.push({ name, priority });
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
+
+    document.getElementById("taskName").value = "";
+    renderTasks();
+}
+
+function renderTasks() {
+    for (let i = 1; i <= 4; i++) {
+        const box = document.getElementById("p" + i);
+        box.innerHTML = box.querySelector("h3").outerHTML;
+    }
+
+    tasks.forEach(task => {
+        const div = document.createElement("div");
+        div.className = "task";
+        div.innerText = task.name;
+
+        if (task.name.length > 10) {
+            const lastDigit = parseInt(MSSV.slice(-1));
+            div.style.color = lastDigit % 2 === 0 ? "red" : "blue";
+        }
+
+        document.getElementById("p" + task.priority).appendChild(div);
+    });
+}
+
+renderTasks();
+</script>
+
+</body>
+</html>
